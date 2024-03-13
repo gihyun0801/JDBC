@@ -1,0 +1,76 @@
+package edu.kh.jdbc1;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.Scanner;
+
+public class JDBCExample5 {
+    public static void main(String[] args) {
+		
+    	//입사일을 입력 받아 ("2000-01-01") 받아
+    	//입력 받은 값 보다 먼저 입사한 사람의
+    	//이름, 입사일, 성별(M, F) 조회
+    	
+    	Connection conn = null;
+    	
+    	Statement stmt = null;
+    	
+    	ResultSet rs = null;
+    	
+    	Scanner sc = new Scanner(System.in);
+    	
+    	try {
+    		
+    		System.out.print("입사일 입력(YYYY-MM-DD) : ");
+    		String date = sc.nextLine();
+    		
+    		Class.forName("oracle.jdbc.driver.OracleDriver");
+    		
+    		String type = "jdbc:oracle:thin:@";
+ 	       String ip = "localhost";  
+ 	       String port = ":1521";
+ 	       String sid = ":XE";  
+ 	       String user = "kh_sgh";
+ 	       String pw = "kh1234"; 
+ 	       
+ 	       conn = DriverManager.getConnection(type+ip+port+sid, user, pw);
+ 	       
+ 	       stmt = conn.createStatement();
+ 	       
+ 	       
+ 	       String sql = "SELECT EMP_NAME AS 이름, TO_CHAR(HIRE_DATE, 'YYYY\"년\"MM\"월\"DD\"일\"') AS 입사일, DECODE(SUBSTR(EMP_NO, 8, 1), 1, 'M', 2, 'F') AS 성별"
+ 	       		+ " FROM EMPLOYEE"
+ 	       		+ " WHERE HIRE_DATE >" + date;
+ 	       
+ 	       rs = stmt.executeQuery(sql);
+ 	       
+ 	       
+    		
+    		
+    		
+    	}catch(Exception e) {
+    		e.printStackTrace();
+    	}finally {
+    		
+    		
+    		try {
+    			
+    			if(rs != null) rs.close();
+    			if(stmt != null) stmt.close();
+    			if(conn != null) conn.close();
+    		}catch(Exception e) {
+    			e.printStackTrace();
+    		}
+    		
+    	}
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+	}
+}

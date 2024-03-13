@@ -1,0 +1,77 @@
+package edu.kh.jdbc1;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.Scanner;
+
+public class JDBCExample3 {
+   public static void main(String[] args) {
+	
+	   // 부서명을 입력받아 같은 부서에 있는 사원의 
+	   // 사원명, 부서명, 급여 조회
+	   
+	   
+	   Connection conn = null;
+	   
+	   Statement stmt = null;
+	   
+	   ResultSet rs = null;
+	   
+	   Scanner sc = new Scanner(System.in);
+	   
+	   try {
+		   
+		   System.out.print("부서명 입력 : "); // 총무부
+		   String str = sc.nextLine();
+		   
+		   Class.forName("oracle.jdbc.driver.OracleDriver");
+		   
+		   //url + host + port + datebase
+		   String type = "jdbc:oracle:thin:@";
+	       String ip = "localhost";  
+	       String port = ":1521";
+	       String sid = ":XE";  
+	       String user = "kh_sgh";
+	       String pw = "kh1234"; 
+	       
+	       //길 뚫기
+	       conn = DriverManager.getConnection(type+ip+port+sid, user, pw);
+	       
+	       stmt = conn.createStatement();
+	       
+	       String sql = "SELECT EMP_ID, EMP_NAME, NVL(DEPT_TITLE, '부서없음') AS DEPT_TITLE FROM EMPLOYEE LEFT JOIN DEPARTMENT ON(DEPT_CODE = DEPT_ID) WHERE DEPT_TITLE = " + str;
+		   
+	       rs = stmt.executeQuery(sql);
+	       
+	       while(rs.next()) {
+	    	   
+	    	   String empId = rs.getString("EMP_ID");
+	    	   String empName = rs.getString("EMP_NAME");
+	    	   String deptTitle = rs.getString("DEPT_TITLE");
+	    	   
+	    	   System.out.printf("사번 : %s / 이름 : %s / 부서명 : %s", empId, empName, deptTitle);
+	    	   
+	    	   
+	    	   
+	    	   
+	       }
+	       
+		   
+	   }catch(Exception e) {
+		   e.printStackTrace();
+	   }finally {
+		   
+		   try {
+			   if(rs != null) rs.close();
+				  if(stmt != null) stmt.close();
+				  if(conn != null) conn.close();
+		   }catch(Exception e) {
+			   e.printStackTrace();
+		   }
+		   
+	   }
+	   
+}
+}
